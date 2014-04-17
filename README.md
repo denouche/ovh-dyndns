@@ -1,7 +1,7 @@
 ovhDynDNS
 =========
 
-Use this script in a cron to update a defined A record in your DNS zone, using OVH API
+Use this script in a cron to update a given A record in your DNS zone, using OVH API
 
 Initialize
 ----------
