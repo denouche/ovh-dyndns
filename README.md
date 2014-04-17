@@ -25,7 +25,7 @@ Just add a new crontab to run this script using the right subdomain and domain, 
 
 This crontab will check every minute that the following record targets the right IP address :
 ```
-    home    IN A 1.2.3.4
+    home.mydomain.com.    60    IN A   1.2.3.4
 ```
 
 If the target IP address is incorrect, it will update the value, changing the target IP by the current IP (retrieved on http://ipecho.net/)
