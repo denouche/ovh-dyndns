@@ -20,7 +20,7 @@ Configuration
 
 Just add a new crontab to run this script using the right subdomain and domain, for example:
 ```
-    * * * * * cd /home/denouche/crontabs/ovhDynDNS/ && ./ovh-dyndns.sh --domain mydomain.com --subdomain home
+    * * * * * cd /home/denouche/crontabs/ovh-dyndns/ && ./ovh-dyndns.sh --domain mydomain.com --subdomain home
 ```
 
 This crontab will check every minute that the following record targets the right IP address :
