@@ -15,6 +15,14 @@ help()
     echo
 }
 
+checkInternetConnexion()
+{
+    ping -c1 -w2 8.8.8.8 &> /dev/null
+    if [ $? -ne 0 ]
+    then
+        exit 2
+    fi
+}
 
 requestApi()
 {
@@ -74,25 +82,39 @@ parseArguments()
         esac
         shift
     done
-
 }
 
-
-main()
+checkArgumentsValids()
 {
-    parseArguments "$@"
-
     if [ -z $DOMAIN ] || [ -z $SUBDOMAIN ]
     then
         echo "No domain or subdomain given"
         help
         exit 1
     fi
+}
+
+refreshZone()
+{
+    requestApi "/domain/zone/$DOMAIN/refresh" 'POST' > /dev/null
+}
+
+main()
+{
+    parseArguments "$@"
+    checkArgumentsValids
+    checkInternetConnexion
 
     updateIp
     IDS=$(requestApi "/domain/zone/$DOMAIN/record?subDomain=$SUBDOMAIN&fieldType=A")
-    
-    if [ $(getJSONArrayLength $IDS) -ne 1 ]
+
+    if [ $(getJSONArrayLength $IDS) -eq 0 ]
+    then
+        # No record found, create one
+        requestApi "/domain/zone/$DOMAIN/record" 'POST' '{"target": "'$IP'", "subDomain": "'$SUBDOMAIN'", "fieldType": "A", "ttl": 60}' > /dev/null
+        refreshZone
+        exit 0
+    elif [ $(getJSONArrayLength $IDS) -ne 1 ]
     then
         echo "Error, multiple results found for record"
         echo "$IDS"
@@ -105,7 +127,7 @@ main()
     if [ $IP != $RECORD_IP ]
     then
         requestApi "/domain/zone/$DOMAIN/record/$RECORD" 'PUT' '{"target":"'$IP'", "ttl": 60}' > /dev/null
-        requestApi "/domain/zone/$DOMAIN/refresh" 'POST' > /dev/null
+        refreshZone
     fi
 }
 
