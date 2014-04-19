@@ -1,7 +1,7 @@
-ovhDynDNS
+ovh-DynDNS
 =========
 
-Use this script in a cron to update a given A record in your DNS zone, using OVH API
+Use this script in a cron to update a given A record in your DNS zone, using OVH API.
 
 Initialize
 ----------
@@ -12,7 +12,7 @@ First in order to retrieve needed dependency, run:
 ```
     make
 ```
-You will be prompted to configure the OVH API application and the consumer key to use (see https://github.com/Denouche/ovhApiBashClient for more informations)
+You will be prompted to configure the OVH API application and the consumer key to use (see https://github.com/denouche/ovh-api-bash-client for more informations)
 
 
 Configuration
