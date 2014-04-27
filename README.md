@@ -6,14 +6,20 @@ Use this script in a cron to update a given A record in your DNS zone, using OVH
 Initialize
 ----------
 
-### Retrieve dependency
+### First initialization
 
-First in order to retrieve needed dependency, run:
+First in order to retrieve needed dependencies and initialize the informations for OVH API requests, run:
 ```
-    make
+    make install
 ```
 You will be prompted to configure the OVH API application and the consumer key to use (see https://github.com/denouche/ovh-api-bash-client for more informations)
 
+### Retrieve dependency
+
+To retrieve dependencies only, run:
+```
+    make
+```
 
 Configuration
 -------------

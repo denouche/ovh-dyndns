@@ -44,7 +44,10 @@ requestApi()
         PARAMS+=("--data")
         PARAMS+=("$DATA")
     fi
-    $CURRENT_PATH/$LIBS/ovhApiBashClient.sh "${PARAMS[@]}"
+    RESPONSE=$( $CURRENT_PATH/$LIBS/ovh-api-bash-client.sh "${PARAMS[@]}" )
+    HTTP_STATUS="$( echo $RESPONSE | cut -d' ' -f1 )"
+    HTTP_RESPONSE="$( echo $RESPONSE | cut -d' ' -f2- )"
+    echo $HTTP_STATUS
 }
 
 updateIp()
@@ -106,7 +109,14 @@ main()
     checkInternetConnexion
 
     updateIp
-    IDS=$(requestApi "/domain/zone/$DOMAIN/record?subDomain=$SUBDOMAIN&fieldType=A")
+
+    requestApi "/domain/zone/$DOMAIN/record?subDomain=$SUBDOMAIN&fieldType=A" > /dev/null
+    if [ $HTTP_STATUS -ne 200 ]
+    then
+        echo "Error: $HTTP_STATUS $HTTP_RESPONSE"
+        exit 1
+    fi
+    IDS="$HTTP_RESPONSE"
 
     if [ $(getJSONArrayLength $IDS) -eq 0 ]
     then
@@ -122,7 +132,13 @@ main()
     fi
 
     RECORD=$(getJSONString $IDS '0')
-    RECORD_IP=$(getJSONString $(requestApi "/domain/zone/$DOMAIN/record/$RECORD") '"target"')
+    requestApi "/domain/zone/$DOMAIN/record/$RECORD" > /dev/null
+    if [ $HTTP_STATUS -ne 200 ]
+    then
+        echo "Error: $HTTP_STATUS $HTTP_RESPONSE"
+        exit 1
+    fi
+    RECORD_IP=$(getJSONString $HTTP_RESPONSE '"target"')
 
     if [ $IP != $RECORD_IP ]
     then
