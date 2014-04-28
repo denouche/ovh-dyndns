@@ -4,7 +4,7 @@
 LIBS="libs"
 GET_IP_URL="http://ipecho.net/plain"
 CURRENT_PATH="$(pwd)"
-
+API_TARGET="EU"
 
 help()
 {
@@ -30,7 +30,10 @@ requestApi()
     METHOD=$2
     DATA=$3
     
-    PARAMS=("--url")
+    PARAMS=("--target")
+    PARAMS+=("$API_TARGET")
+
+    PARAMS+=("--url")
     PARAMS+=("$URL")
     
     if [ "$METHOD" ]
