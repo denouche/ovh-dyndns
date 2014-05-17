@@ -2,7 +2,7 @@
 
 # DEFAULT CONFIG
 LIBS="libs"
-GET_IP_URL="http://ipecho.net/plain"
+GET_IP_URL="http://ipv4.icanhazip.com/"
 CURRENT_PATH="$(pwd)"
 API_TARGET="EU"
 
