@@ -62,8 +62,16 @@ getJSONString()
 {
     JSON="$1"
     FIELD="$2"
-    RESULT=$(echo $JSON | $CURRENT_PATH/$LIBS/JSON.sh -l | grep "\[$FIELD\]" | sed -r "s/\[$FIELD\]\s+(.*)/\1/")
+    RESULT=$(getJSONValue "$JSON" "$FIELD")
     echo ${RESULT:1:-1}
+}
+
+getJSONValue()
+{
+    JSON="$1"
+    FIELD="$2"
+    RESULT=$(echo $JSON | $CURRENT_PATH/$LIBS/JSON.sh -l | grep "\[$FIELD\]" | sed -r "s/\[$FIELD\]\s+(.*)/\1/")
+    echo ${RESULT}
 }
 
 getJSONArrayLength()
@@ -134,7 +142,7 @@ main()
         exit 1
     fi
 
-    RECORD=$(getJSONString $IDS '0')
+    RECORD=$(getJSONValue $IDS '0')
     requestApi "/domain/zone/$DOMAIN/record/$RECORD" > /dev/null
     if [ $HTTP_STATUS -ne 200 ]
     then
