@@ -113,14 +113,8 @@ refreshZone()
     requestApi "/domain/zone/$DOMAIN/refresh" 'POST' > /dev/null
 }
 
-main()
+getIds ()
 {
-    parseArguments "$@"
-    checkArgumentsValids
-    checkInternetConnexion
-
-    updateIp
-
     requestApi "/domain/zone/$DOMAIN/record?subDomain=$SUBDOMAIN&fieldType=A" > /dev/null
     if [ $HTTP_STATUS -ne 200 ]
     then
@@ -128,6 +122,31 @@ main()
         exit 1
     fi
     IDS="$HTTP_RESPONSE"
+}
+
+main()
+{
+    parseArguments "$@"
+    checkArgumentsValids
+    checkInternetConnexion
+
+    updateIp
+    getIds
+
+    if [ $(getJSONArrayLength $IDS) -gt 1 ]
+    then
+        echo "Error, multiple results found for record"
+        echo "$IDS"
+        i=0
+        while [ $i -lt $(getJSONArrayLength $IDS) ]
+        do
+            CURRENT_ID=$(getJSONValue $IDS $i)
+            requestApi "/domain/zone/$DOMAIN/record/$CURRENT_ID" 'DELETE' > /dev/null
+            i=$((i+1))
+        done
+        echo "All results were deleted, will create a new record"
+        getIds
+    fi
 
     if [ $(getJSONArrayLength $IDS) -eq 0 ]
     then
@@ -135,11 +154,6 @@ main()
         requestApi "/domain/zone/$DOMAIN/record" 'POST' '{"target": "'$IP'", "subDomain": "'$SUBDOMAIN'", "fieldType": "A", "ttl": 60}' > /dev/null
         refreshZone
         exit 0
-    elif [ $(getJSONArrayLength $IDS) -ne 1 ]
-    then
-        echo "Error, multiple results found for record"
-        echo "$IDS"
-        exit 1
     fi
 
     RECORD=$(getJSONValue $IDS '0')
