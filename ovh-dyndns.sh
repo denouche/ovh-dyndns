@@ -2,7 +2,7 @@
 
 # DEFAULT CONFIG
 LIBS="libs"
-GET_IP_URL="http://ipv4.icanhazip.com/"
+GET_IP_URL="http://myip.leveugle.net/"
 CURRENT_PATH="$(pwd)"
 API_TARGET="EU"
 
