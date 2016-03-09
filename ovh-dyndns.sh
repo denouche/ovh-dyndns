@@ -2,7 +2,7 @@
 
 # DEFAULT CONFIG
 LIBS="libs"
-GET_IP_URL="http://myip.leveugle.net/"
+GET_IP_URL="http://ipecho.net/plain"
 CURRENT_PATH="$(pwd)"
 API_TARGET="EU"
 
