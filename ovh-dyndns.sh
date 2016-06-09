@@ -11,7 +11,7 @@ help()
     echo
     echo "Help: possible arguments are:"
     echo "  --domain <domain>       : the domain on which update the A record in the DNS zone"
-    echo "  --subdomain <subdomain> : the subdomain for this A record"
+    echo "  --subdomain <subdomain> : (optional) the subdomain for this A record"
     echo
 }
 
@@ -100,9 +100,9 @@ parseArguments()
 
 checkArgumentsValids()
 {
-    if [ -z $DOMAIN ] || [ -z $SUBDOMAIN ]
+    if [ -z $DOMAIN ]
     then
-        echo "No domain or subdomain given"
+        echo "No domain given"
         help
         exit 1
     fi
