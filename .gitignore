@@ -1,5 +1,6 @@
 .ovhApplication*
 .ovhConsumerKey*
+ovh-api-bash-client.sh
 libs/
 
 

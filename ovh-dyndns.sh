@@ -3,7 +3,7 @@
 # DEFAULT CONFIG
 LIBS="libs"
 GET_IP_URL="http://ipecho.net/plain"
-CURRENT_PATH="$(pwd)"
+CURRENT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 API_TARGET="EU"
 
 help()
@@ -47,7 +47,7 @@ requestApi()
         PARAMS+=("--data")
         PARAMS+=("$DATA")
     fi
-    RESPONSE=$( $CURRENT_PATH/$LIBS/ovh-api-bash-client.sh "${PARAMS[@]}" )
+    RESPONSE=$( $CURRENT_PATH/ovh-api-bash-client.sh "${PARAMS[@]}" )
     HTTP_STATUS="$( echo $RESPONSE | cut -d' ' -f1 )"
     HTTP_RESPONSE="$( echo $RESPONSE | cut -d' ' -f2- )"
     echo $HTTP_STATUS
