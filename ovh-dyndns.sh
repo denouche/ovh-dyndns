@@ -47,7 +47,7 @@ requestApi()
         PARAMS+=("--data")
         PARAMS+=("$DATA")
     fi
-    RESPONSE=$( $CURRENT_PATH/ovh-api-bash-client.sh "${PARAMS[@]}" )
+    RESPONSE=$( "$CURRENT_PATH/ovh-api-bash-client.sh" "${PARAMS[@]}" )
     HTTP_STATUS="$( echo $RESPONSE | cut -d' ' -f1 )"
     HTTP_RESPONSE="$( echo $RESPONSE | cut -d' ' -f2- )"
     echo $HTTP_STATUS
@@ -70,14 +70,14 @@ getJSONValue()
 {
     JSON="$1"
     FIELD="$2"
-    RESULT=$(echo $JSON | $CURRENT_PATH/$LIBS/JSON.sh -l | grep "\[$FIELD\]" | sed -r "s/\[$FIELD\]\s+(.*)/\1/")
+    RESULT=$(echo $JSON | "$CURRENT_PATH/$LIBS/JSON.sh" -l | grep "\[$FIELD\]" | sed -r "s/\[$FIELD\]\s+(.*)/\1/")
     echo ${RESULT}
 }
 
 getJSONArrayLength()
 {
     JSON="$1"
-    echo $JSON | $CURRENT_PATH/$LIBS/JSON.sh -l | wc -l
+    echo $JSON | "$CURRENT_PATH/$LIBS/JSON.sh" -l | wc -l
 }
 
 parseArguments()
