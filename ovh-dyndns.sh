@@ -2,7 +2,7 @@
 
 # DEFAULT CONFIG
 LIBS="libs"
-GET_IP_URL="http://ipecho.net/plain"
+GET_IP_URL="https://checkip.amazonaws.com"
 CURRENT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 API_TARGET="EU"
 
