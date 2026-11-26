@@ -12,6 +12,7 @@ help()
     echo "Help: possible arguments are:"
     echo "  --domain <domain>       : the domain on which update the A record in the DNS zone"
     echo "  --subdomain <subdomain> : (optional) the subdomain for this A record"
+    echo "  --on-change <script>    : (optional) executable script/command called with the new IP when updated"
     echo
 }
 
@@ -55,7 +56,12 @@ requestApi()
 
 updateIp()
 {
-    IP=$(wget -q -O - $GET_IP_URL)
+    IP=$(wget -q -O - "$GET_IP_URL")
+    if [[ ! "$IP" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]
+    then
+        echo "Invalid IP retrieved: $IP"
+        exit 1
+    fi
 }
 
 getJSONString()
@@ -93,6 +99,10 @@ parseArguments()
             shift
             SUBDOMAIN=$1
             ;;
+        --on-change)
+            shift
+            ON_CHANGE_SCRIPT=$1
+            ;;
         esac
         shift
     done
@@ -106,11 +116,25 @@ checkArgumentsValids()
         help
         exit 1
     fi
+
+    if [ -n "$ON_CHANGE_SCRIPT" ] && [ ! -x "$ON_CHANGE_SCRIPT" ]
+    then
+        echo "Error: --on-change target '$ON_CHANGE_SCRIPT' does not exist or is not executable"
+        exit 1
+    fi
 }
 
 refreshZone()
 {
     requestApi "/domain/zone/$DOMAIN/refresh" 'POST' > /dev/null
+}
+
+runOnChangeHook()
+{
+    if [ -n "$ON_CHANGE_SCRIPT" ]
+    then
+        "$ON_CHANGE_SCRIPT" "$IP"
+    fi
 }
 
 getIds ()
@@ -153,6 +177,7 @@ main()
         # No record found, create one
         requestApi "/domain/zone/$DOMAIN/record" 'POST' '{"target": "'$IP'", "subDomain": "'$SUBDOMAIN'", "fieldType": "A", "ttl": 60}' > /dev/null
         refreshZone
+        runOnChangeHook
         exit 0
     fi
 
@@ -165,10 +190,11 @@ main()
     fi
     RECORD_IP=$(getJSONString $HTTP_RESPONSE '"target"')
 
-    if [ $IP != $RECORD_IP ]
+    if [ "$IP" != "$RECORD_IP" ]
     then
         requestApi "/domain/zone/$DOMAIN/record/$RECORD" 'PUT' '{"target":"'$IP'", "ttl": 60}' > /dev/null
         refreshZone
+        runOnChangeHook
     fi
 }
 
